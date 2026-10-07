@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Завантаження шпалер</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      background-color: #0d1117;
+      color: #c9d1d9;
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+    .card {
+      background: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 8px;
+      padding: 24px;
+      margin-bottom: 20px;
+    }
+    .btn {
+      display: inline-block;
+      background-color: #238636;
+      color: #ffffff;
+      padding: 12px 20px;
+      border-radius: 6px;
+      text-decoration: none;
+      font-weight: bold;
+      margin-top: 10px;
+    }
+    .btn:hover { background-color: #2ea043; }
+    ul { list-style: none; padding: 0; }
+    li {
+      padding: 10px 0;
+      border-bottom: 1px solid #30363d;
+      display: flex;
+      justify-content: space-between;
+    }
+    a { color: #58a6ff; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+
+  <h1>🖼️ Завантажити шпалери</h1>
+
+  <div class="card" id="latest-release">
+    <h2>Остання версія</h2>
+    <p id="latest-version">Завантаження...</p>
+    <a id="download-btn" href="#" class="btn" style="display:none;">Завантажити ZIP</a>
+  </div>
+
+  <div class="card">
+    <h3>Минулі версії</h3>
+    <ul id="history-list"></ul>
+  </div>
+
+  <script>
+    const USER = 'YOUR_USERNAME';
+    const REPO = 'YOUR_REPO';
+
+    async function loadReleases() {
+      try {
+        const res = await fetch(`https://api.github.com/repos/${USER}/${REPO}/releases`);
+        const releases = await res.json();
+
+        if (releases.length === 0) {
+          document.getElementById('latest-version').innerText = 'Релізів поки немає.';
+          return;
+        }
+
+        // Остання версія
+        const latest = releases[0];
+        const zipAsset = latest.assets.find(a => a.name.endsWith('.zip')) || latest.assets[0];
+
+        document.getElementById('latest-version').innerText = `Версія: ${latest.tag_name} (${new Date(latest.published_at).toLocaleDateString()})`;
+        
+        if (zipAsset) {
+          const btn = document.getElementById('download-btn');
+          btn.href = zipAsset.browser_download_url;
+          btn.style.display = 'inline-block';
+        }
+
+        // Історія версій
+        const historyList = document.getElementById('history-list');
+        releases.forEach(rel => {
+          const asset = rel.assets.find(a => a.name.endsWith('.zip'));
+          if (asset) {
+            const li = document.createElement('li');
+            li.innerHTML = `
+              <span><strong>${rel.tag_name}</strong> (${new Date(rel.published_at).toLocaleDateString()})</span>
+              <a href="${asset.browser_download_url}">Завантажити ZIP</a>
+            `;
+            historyList.appendChild(li);
+          }
+        });
+      } catch (err) {
+        document.getElementById('latest-version').innerText = 'Помилка завантаження даних.';
+      }
+    }
+
+    loadReleases();
+  </script>
+</body>
+</html>
