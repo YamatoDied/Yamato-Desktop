@@ -7,9 +7,19 @@
 <script>/* monitor slot: ?mon=0 is the primary (editable) screen, 1.. are extra monitors (read-only mirrors). The [YDn] tag lets the host find the right window. */
 var YD_MON = parseInt((location.search.match(/[?&]mon=(\d+)/) || [0, 0])[1], 10) || 0;
 document.title = "Yamato Desktop YD Release [YD" + YD_MON + "]";</script>
+<meta http-equiv="Content-Security-Policy" content="form-action 'none'; base-uri 'self'">
+<script src="guard.js"></script>
+<script src="diag.js"></script>
 <script src="mega.js"></script>
+<script src="perf.js"></script>
 <link rel="stylesheet" href="style.css">
 <link rel="stylesheet" href="spinner-look.css">
+<link rel="stylesheet" href="ui2.css">
+<link rel="stylesheet" href="ui3.css">
+<link rel="stylesheet" href="ui4.css">
+<link rel="stylesheet" href="perf.css">
+<link rel="stylesheet" href="chaos.css">
+<link rel="stylesheet" href="wood.css">
 </head>
 <body>
 <div id="wallpaper" class="wallpaper">
@@ -20,16 +30,6 @@ document.title = "Yamato Desktop YD Release [YD" + YD_MON + "]";</script>
       <div id="heroCopy" class="hero-copy moveable" data-key="heroGroup">
         <div id="clock" class="clock"><span id="ch">18</span><i>:</i><span id="cm">14</span><i>:</i><span id="cs">32</span></div>
         <div id="date" class="date">MONDAY · 05 OCTOBER 2026</div>
-        <div id="codeCard" class="code-card">
-          <div>const currentTime = {</div>
-          <div class="indent">year: <span id="year">2026</span>,</div>
-          <div class="indent">month: <span id="month">10</span>,</div>
-          <div class="indent">day: <span id="day">05</span>,</div>
-          <div class="indent">hour: <span id="hour">18</span>,</div>
-          <div class="indent">minute: <span id="minute">14</span>,</div>
-          <div class="indent">second: <span id="second">32</span></div>
-          <div>};</div>
-        </div>
       </div>
 
       <div id="analogWrap" class="clock-wrap moveable" data-key="analog">
@@ -42,19 +42,10 @@ document.title = "Yamato Desktop YD Release [YD" + YD_MON + "]";</script>
 
     <section id="bottomGrid" class="bottom-grid moveable" data-key="bottomGrid">
       <article id="notesPanel" class="panel moveable" data-key="notesPanel">
-        <div class="panel-head"><span>// NOTES</span><span class="panel-head-r"><button id="noteEditBtn" class="note-edit-btn" type="button" aria-label="Edit note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20l1-4L16.5 4.5a2.1 2.1 0 0 1 3 3L8 19l-4 1z"/><path d="M14.5 6.5l3 3"/></svg></button><span class="panel-code">LOCAL</span></span></div>
+        <div class="panel-head"><span>// NOTES</span><span class="panel-head-r"><button id="noteFsDown" class="note-edit-btn note-fs-btn" type="button" aria-label="Smaller text" title="A−">A−</button><button id="noteFsUp" class="note-edit-btn note-fs-btn" type="button" aria-label="Bigger text" title="A+">A+</button><button id="noteEditBtn" class="note-edit-btn" type="button" aria-label="Edit note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20l1-4L16.5 4.5a2.1 2.1 0 0 1 3 3L8 19l-4 1z"/><path d="M14.5 6.5l3 3"/></svg></button><span class="panel-code">LOCAL</span></span></div>
         <div id="noteDisplay" class="note-display">Write your note in the editor.</div>
       </article>
       <div id="mwWidget" class="mw-widget mw-docked moveable" data-key="musicw"></div>
-      <article id="aiPanel" class="panel moveable" data-key="aiPanel">
-        <div class="panel-head"><span>// AI</span><span id="aiStatus" class="panel-code">AI</span></div>
-        <div id="aiQ" class="ai-q" style="display:none"></div>
-        <div id="aiGreeting" class="ai-greeting"></div>
-        <div class="ai-foot">
-          <span id="aiSub" class="ai-sub"></span>
-          <span class="ai-btns"><button id="aiPower" class="ai-mini pw" type="button">&#9211;</button><button id="aiRandBtn" class="ai-mini" type="button">&#127922;</button><button id="aiOpenChat" class="ai-mini" type="button">&#128172;</button><button id="aiOpenMic" class="ai-mini" type="button"><svg class="mic-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0"/><path d="M12 18v3"/><path d="M9 21h6"/></svg></button></span>
-        </div>
-      </article>
       <article id="progressPanel" class="panel moveable" data-key="progressPanel">
         <div class="panel-head"><span>// PROGRESS</span><span class="panel-code">LIVE</span></div>
         <div class="progress-metrics">
@@ -137,12 +128,25 @@ document.title = "Yamato Desktop YD Release [YD" + YD_MON + "]";</script>
   </div>
 
   <div id="pctWidget" class="pct-widget moveable" data-key="pct"></div>
+
+  <div id="chaosWidget" class="chaos-widget moveable" data-key="chaos"></div>   <!-- Release 1.2 part 3e: CHAOS (built by chaos.js) -->
+
+  <article id="aiPanel" class="pct-widget ai-widget moveable" data-key="aiPanel">
+    <div class="pw-head panel-head"><span>// AI</span><span id="aiStatus" class="panel-code">AI</span></div>
+    <div id="aiQ" class="ai-q" style="display:none"></div>
+    <div id="aiGreeting" class="ai-greeting"></div>
+    <div class="ai-foot">
+      <span id="aiSub" class="ai-sub"></span>
+      <span class="ai-btns"><button id="aiPower" class="ai-mini pw" type="button">&#9211;</button><button id="aiRandBtn" class="ai-mini" type="button">&#127922;</button><button id="aiOpenChat" class="ai-mini" type="button">&#128172;</button><button id="aiOpenMic" class="ai-mini" type="button"><svg class="mic-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0"/><path d="M12 18v3"/><path d="M9 21h6"/></svg></button></span>
+    </div>
+  </article>
   
 
   <div id="edgeUi" class="edge-ui">
     <div id="hostHint" class="host-hint host-only" data-i18n="hostHint"></div>
     <button id="openEditor" class="open-editor" type="button">⚙ EDIT</button>
     <button id="restartBtn" class="open-editor restart-btn host-only" type="button" data-i18n="restart">↻ RESTART</button>
+    <button id="lockBtn" class="open-editor lock-btn host-only" type="button" aria-pressed="false">🔓 LOCK</button>
     <button id="quitBtn" class="open-editor quit-btn host-only" type="button">⏻ EXIT</button>
   </div>
 
@@ -155,19 +159,23 @@ document.title = "Yamato Desktop YD Release [YD" + YD_MON + "]";</script>
     <div class="editor-shell">
       <div class="editor-head">
         <div><div class="editor-kicker">YAMATO / WALLPAPER EDITOR</div><div class="editor-title" data-i18n="editorTitle">Desktop editor</div></div>
-        <div class="header-actions"><div class="ui-scale" title="Menu size"><button id="uiScaleDown" type="button" aria-label="Smaller">A−</button><span id="uiScaleVal">100%</span><button id="uiScaleUp" type="button" aria-label="Larger">A+</button></div><div class="language-switch"><button id="uiEN" class="lang-btn active" type="button">EN</button><button id="uiUA" class="lang-btn" type="button">UA</button></div><button id="closeEditor" class="editor-close" type="button" aria-label="Close">×</button></div>
+        <div class="header-actions"><div class="ui-scale undo-box"><button class="g-undo" type="button" aria-label="Undo">↶</button><button class="g-redo" type="button" aria-label="Redo">↷</button></div><div class="ui-scale" title="Menu size"><button id="uiScaleDown" type="button" aria-label="Smaller">A−</button><span id="uiScaleVal">100%</span><button id="uiScaleUp" type="button" aria-label="Larger">A+</button></div><div class="language-switch"><button id="uiEN" class="lang-btn active" type="button">EN</button><button id="uiUA" class="lang-btn" type="button">UA</button></div><button id="closeEditor" class="editor-close" type="button" aria-label="Close">×</button></div>
       </div>
       <div class="editor-tabs">
         <button class="editor-tab active" data-tab="layout" data-i18n="tabLayout">РОЗКЛАДКА</button>
+        <button class="editor-tab host-tab" data-tab="desk" id="deskTab">СТІЛ І МИША</button>
         <button class="editor-tab" data-tab="widgets" data-i18n="tabWidgets">ВІДЖЕТИ</button>
+        <button class="editor-tab" data-tab="clock" data-i18n="tabClock">ГОДИННИК</button>
         <button class="editor-tab host-tab" data-tab="sound" data-i18n="tabSound">ЗВУК</button>
 <button class="editor-tab" data-tab="effects" data-i18n="tabFx">ЕФЕКТИ</button>
 <button class="editor-tab" data-tab="style" data-i18n="tabStyle">СТИЛЬ</button>
         <button class="editor-tab" data-tab="presets" data-i18n="tabPresets">ПРЕСЕТИ</button>
         <button class="editor-tab" data-tab="auto" data-i18n="tabAuto">АВТО</button>
+        <button class="editor-tab" data-tab="perf" id="perfTab">ОПТИМІЗАЦІЯ</button>
         <button class="editor-tab host-tab" data-tab="system" data-i18n="tabSystem">СИСТЕМА</button>
 <button class="editor-tab host-tab" data-tab="chat" data-i18n="tabChat">ЧАТ</button>
         <button class="editor-tab host-tab" data-tab="ai" data-i18n="tabAi">ШІ</button>
+        <button class="editor-tab" data-tab="edwin" id="edwinTab">РЕДАКТОР</button>
         <button class="editor-tab" data-tab="about" data-i18n="tabAbout">ПРО ШПАЛЕРУ</button>
       </div>
 
@@ -238,6 +246,19 @@ document.title = "Yamato Desktop YD Release [YD" + YD_MON + "]";</script>
             <div id="calcEditBox" class="calc-editbox">
               <div class="size-row calc-size-row"><span class="size-row-name" data-i18n="calcSizeLabel">Розмір калькулятора</span><div class="size-controls"><button id="calcSizeDown" type="button" aria-label="Smaller">&minus;</button><span id="calcSizeVal" class="size-value">M</span><button id="calcSizeUp" type="button" aria-label="Larger">+</button></div></div>
             </div>
+          </div><div class="layout-card move-card chaos-card" data-wkey="chaos">
+            <div class="card-title" data-i18n="chaosTitle">// ХАОС</div>
+            <p data-i18n="chaosAddSub"></p>
+            <p class="ex-hint chaos-warn" data-i18n="chaosWarn"></p>
+            <div class="inst-bar">
+              <span id="chaosStatus" class="inst-status">НЕ ВСТАНОВЛЕНО</span>
+              <button id="chaosInstallBtn" class="wide-btn primary inst-btn" type="button" data-i18n="chaosInstallBtn">ВСТАНОВИТИ ХАОС</button>
+              <button id="chaosUninstallBtn" class="wide-btn inst-btn uninst" type="button" data-i18n="chaosUninstallBtn" style="display:none">ДЕІНСТАЛЮВАТИ ВІДЖЕТ</button>
+            </div>
+            <div id="chaosEditBox" class="calc-editbox">
+              <p class="ex-hint" data-i18n="chaosHint"></p>
+              <button id="chaosResetPts" class="wide-btn" type="button" data-i18n="chaosResetPts"></button>
+            </div>
           </div><div class="layout-card move-card daily-card">
             <div class="card-title" data-i18n="dyTitle"></div>
             <p data-i18n="dyText"></p>
@@ -261,6 +282,7 @@ document.title = "Yamato Desktop YD Release [YD" + YD_MON + "]";</script>
               <p class="ex-hint" data-i18n="dyHint"></p>
             </div>
           </div></div></section>
+<section class="editor-page" data-page="clock"><div id="w2Clk"></div></section>
 <section class="editor-page" data-page="sound"><div class="page-heading"><div><h2 data-i18n="tabSound"></h2><p data-i18n="soundSub"></p></div></div>
 <div class="layout-card move-card host-only music-card">
             <div class="card-title" data-i18n="mxTitle">МУЗИКА</div>
@@ -274,10 +296,6 @@ document.title = "Yamato Desktop YD Release [YD" + YD_MON + "]";</script>
               <button id="mxBarsT" class="switch" type="button" role="switch" aria-checked="true"><i></i></button>
             </div>
             <div class="switch-row">
-              <div class="switch-text"><b data-i18n="mxEdgeLabel"></b><small data-i18n="mxEdgeSub"></small></div>
-              <button id="mxEdgeT" class="switch" type="button" role="switch" aria-checked="true"><i></i></button>
-            </div>
-            <div class="switch-row">
               <div class="switch-text"><b data-i18n="mxPanelsLabel"></b><small data-i18n="mxPanelsSub"></small></div>
               <button id="mxPanelsT" class="switch" type="button" role="switch" aria-checked="true"><i></i></button>
             </div>
@@ -285,7 +303,7 @@ document.title = "Yamato Desktop YD Release [YD" + YD_MON + "]";</script>
               <div class="switch-text"><b data-i18n="mxClockLabel"></b><small data-i18n="mxClockSub"></small></div>
               <button id="mxClockT" class="switch" type="button" role="switch" aria-checked="true"><i></i></button>
             </div>
-            <div class="switch-row">
+            <div class="switch-row" style="display:none">
               <div class="switch-text"><b data-i18n="mxSpinLabel"></b><small data-i18n="mxSpinSub"></small></div>
               <button id="mxSpinT" class="switch" type="button" role="switch" aria-checked="true"><i></i></button>
             </div>
@@ -294,9 +312,24 @@ document.title = "Yamato Desktop YD Release [YD" + YD_MON + "]";</script>
             <div id="mxStatus" class="ex-status"></div>
             <p class="ex-hint" data-i18n="mxHint"></p>
           </div>
+<div class="layout-card move-card host-only music-card edge-card" id="mxEdgeCard">
+            <div class="card-title" data-i18n="mxEdgeTitle">КРАЇ ЕКРАНА</div>
+            <p data-i18n="mxEdgeCardSub"></p>
+            <div class="switch-row">
+              <div class="switch-text"><b data-i18n="mxEdgeLabel"></b><small data-i18n="mxEdgeSub"></small></div>
+              <button id="mxEdgeT" class="switch" type="button" role="switch" aria-checked="true"><i></i></button>
+            </div>
+            <div id="mxEdgeHost" class="mx-custom"></div>
+          </div>
 </section>
 <section class="editor-page" data-page="effects"><div class="page-heading"><div><h2 data-i18n="tabFx"></h2><p data-i18n="fxSub"></p></div></div>
 <div id="w2Fx"></div>
+</section>
+<section class="editor-page" data-page="desk"><div class="page-heading"><div><h2 id="dkH">СТІЛ І МИША</h2><p id="dkP"></p></div></div>
+<div id="dkRoot"></div>
+</section>
+<section class="editor-page" data-page="perf"><div class="page-heading"><div><h2 id="pfH">ОПТИМІЗАЦІЯ</h2><p id="pfP"></p></div></div>
+<div id="pfRoot"></div>
 </section>
 <section class="editor-page" data-page="system"><div class="page-heading"><div><h2 data-i18n="tabSystem"></h2><p data-i18n="systemSub"></p></div></div>
 <div class="layout-card move-card host-only sys-card">
@@ -314,6 +347,30 @@ document.title = "Yamato Desktop YD Release [YD" + YD_MON + "]";</script>
               <div class="switch-text"><b data-i18n="megaLabel"></b><small data-i18n="megaSub"></small></div>
               <button id="megaToggle" class="switch" type="button" role="switch" aria-checked="true"><i></i></button>
             </div>
+            <div class="dsk-block">
+              <div class="card-title sp" data-i18n="dskTitle"></div>
+              <p class="ex-hint" data-i18n="dskText"></p>
+            <div class="switch-row">
+              <div class="switch-text"><b data-i18n="dskClickLabel"></b><small data-i18n="dskClickSub"></small></div>
+              <button id="dskClick" class="switch" type="button" role="switch" aria-checked="true"><i></i></button>
+            </div>
+            <div class="switch-row">
+              <div class="switch-text"><b data-i18n="dskEmbedLabel"></b><small data-i18n="dskEmbedSub"></small></div>
+              <button id="dskEmbed" class="switch" type="button" role="switch" aria-checked="true"><i></i></button>
+            </div>
+            <div class="switch-row">
+              <div class="switch-text"><b data-i18n="dskAllLabel"></b><small data-i18n="dskAllSub"></small></div>
+              <button id="dskAll" class="switch" type="button" role="switch" aria-checked="true"><i></i></button>
+            </div>
+            <div class="switch-row">
+              <div class="switch-text"><b data-i18n="dskFxLabel"></b><small data-i18n="dskFxSub"></small></div>
+              <button id="dskFx" class="switch" type="button" role="switch" aria-checked="true"><i></i></button>
+            </div>
+            <div class="switch-row">
+              <div class="switch-text"><b data-i18n="dskTypeLabel"></b><small data-i18n="dskTypeSub"></small></div>
+              <div class="seg"><button id="dskT0" class="mini-btn" type="button" data-i18n="dskT0"></button><button id="dskT1" class="mini-btn" type="button" data-i18n="dskT1"></button><button id="dskT2" class="mini-btn" type="button" data-i18n="dskT2"></button></div>
+            </div>
+            </div>
             <div class="hk-block">
               <div class="card-title sp" data-i18n="hkTitle"></div>
               <p class="ex-hint" data-i18n="hkText"></p>
@@ -324,6 +381,18 @@ document.title = "Yamato Desktop YD Release [YD" + YD_MON + "]";</script>
               <div class="switch-row hk-row">
                 <div class="switch-text"><b data-i18n="hkAssistLabel"></b><small data-i18n="hkAssistSub"></small></div>
                 <button id="hkAssistBtn" class="hk-key" type="button"></button>
+              </div>
+              <div class="switch-row hk-row">
+                <div class="switch-text"><b data-i18n="hkMediaLabel"></b><small data-i18n="hkMediaSub"></small></div>
+                <button id="hkMediaBtn" class="hk-key" type="button"></button>
+              </div>
+              <div class="switch-row hk-row">
+                <div class="switch-text"><b data-i18n="hkDeskLabel"></b><small data-i18n="hkDeskSub"></small></div>
+                <button id="hkDeskBtn" class="hk-key" type="button"></button>
+              </div>
+              <div class="switch-row hk-row">
+                <div class="switch-text"><b data-i18n="hkRandomLabel"></b><small data-i18n="hkRandomSub"></small></div>
+                <button id="hkRandomBtn" class="hk-key" type="button"></button>
               </div>
               <div id="hkStatus" class="ex-status"></div>
               <button id="hkReset" class="wide-btn" type="button" data-i18n="hkReset"></button>
@@ -354,13 +423,14 @@ document.title = "Yamato Desktop YD Release [YD" + YD_MON + "]";</script>
 </section>
 
         <section class="editor-page" data-page="style">
+          <button id="styleRandomBtn" class="wide-btn style-random-btn" type="button" data-i18n="btnRandomLook">🎲 ВИПАДКОВИЙ ВИГЛЯД</button>
           <div class="subtabs">
             <button class="subtab active" data-sub="tpl" type="button" data-i18n="subTpl">ШАБЛОНИ</button>
             <button class="subtab" data-sub="col" type="button" data-i18n="subCol">ПАЛІТРИ</button>
             <button class="subtab" data-sub="scenes" type="button" data-i18n="subScenes">ШПАЛЕРИ (140+)</button>
                       </div>
           <div class="subpage active" data-subpage="tpl">
-            <div class="toggle-grid"><button id="analogToggle" class="wide-btn tog" type="button"></button><button id="clockToggle" class="wide-btn tog" type="button"></button><button id="dateToggle" class="wide-btn tog" type="button"></button><button id="codeToggle" class="wide-btn tog" type="button"></button></div>
+            <div class="toggle-grid"><button id="analogToggle" class="wide-btn tog" type="button"></button><button id="clockToggle" class="wide-btn tog" type="button"></button><button id="dateToggle" class="wide-btn tog" type="button"></button></div>
             <div id="tplGrid" class="tpl-grid"></div>
           </div>
           <div class="subpage" data-subpage="col">
@@ -382,6 +452,11 @@ document.title = "Yamato Desktop YD Release [YD" + YD_MON + "]";</script>
 
         <section class="editor-page" data-page="presets">
           <div class="page-heading"><div><h2 data-i18n="presetsHeading"></h2><p data-i18n="presetsSub"></p></div></div>
+          <div class="layout-card move-card slots-card">
+            <div class="card-title" data-i18n="slotsT"></div>
+            <p data-i18n="slotsSub"></p>
+            <div id="presetSlots" class="slot-grid"></div>
+          </div>
           <div class="layout-card move-card">
             <div class="card-title" data-i18n="presetSaveTitle"></div>
             <div class="ex-row"><input id="presetName" class="ex-input" type="text" maxlength="24" autocomplete="off" spellcheck="false"><button id="presetSaveBtn" class="wide-btn primary ex-inline" type="button" data-i18n="presetSave"></button></div>
@@ -389,6 +464,13 @@ document.title = "Yamato Desktop YD Release [YD" + YD_MON + "]";</script>
           <div class="layout-card move-card sys-card">
             <div class="card-title" data-i18n="presetListTitle"></div>
             <div id="presetList" class="preset-list"></div>
+          </div>
+          <div class="layout-card move-card">
+            <div class="card-title" data-i18n="presetShareTitle"></div>
+            <div class="preset-empty" data-i18n="presetShareText"></div>
+            <button id="presetExportAll" class="wide-btn" type="button" data-i18n="presetExportAll"></button>
+            <textarea id="presetCode" class="ex-input preset-code" rows="4" spellcheck="false" autocomplete="off"></textarea>
+            <div class="ex-row"><button id="presetImportBtn" class="wide-btn primary ex-inline" type="button" data-i18n="presetImport"></button><button id="presetCodeClear" class="wide-btn ex-inline" type="button" data-i18n="presetCodeClear"></button></div>
           </div>
         </section>
 
@@ -455,6 +537,7 @@ document.title = "Yamato Desktop YD Release [YD" + YD_MON + "]";</script>
           </div>
         </section>
 
+        <section class="editor-page" data-page="edwin"><div id="edWinRoot"></div></section>
         <section class="editor-page" data-page="about">
           <div class="about-card full-about">
             <div class="card-title" data-i18n="aboutWallpaper">ПРО ЦІ ШПАЛЕРИ</div>
@@ -472,7 +555,7 @@ document.title = "Yamato Desktop YD Release [YD" + YD_MON + "]";</script>
             <button id="resetEditor" class="reset-btn" type="button" data-i18n="reset">СКИНУТИ</button>
           </div>
 
-          <details class="layout-card move-card spinner-card extras-card" open>
+          <div id="spCardHidden" style="display:none" aria-hidden="true"><details class="layout-card move-card spinner-card extras-card">
             <summary class="card-title" style="cursor:pointer;user-select:none"><span id="spCardTitle">// СПІНЕР</span> <small style="opacity:.6;font-size:11px;margin-left:6px;">[Release 1.1]</small></summary>
             <p id="spCardText">Спінер на шпалерах: тапай або утримуй, збирай обороти. Кнопка ПРОКАЧКА відкриває панель просто на сторінці (без нового вікна). Кнопка «У ВІКНІ» виносить спінер в окреме вікно. Замок 🔒 у налаштуванні розмірів віджетів: за замовчуванням спінер заблокований від пересування.</p>
             <span id="spStatus" class="inst-status"></span>
@@ -480,24 +563,25 @@ document.title = "Yamato Desktop YD Release [YD" + YD_MON + "]";</script>
             <button id="spOpenWinEdit" class="wide-btn sp-openwin primary" type="button">ВІДКРИТИ СПІНЕР У ВІКНІ</button>
             <div style="display:none" aria-hidden="true"><button id="spOpenWinOld" type="button"></button></div>
             <div id="spEditBox" class="sp-editbox"></div>
-          </details>
+          </details></div>
         </section>
       </div>
-      <div class="scroll-btns"><button id="scUp" type="button" aria-label="Up">▲</button><button id="scDn" type="button" aria-label="Down">▼</button></div>
       <div id="toast" class="toast" role="status" aria-live="polite"></div>
     </div>
   </div>
 
   <div id="aiChat" class="ai-chat" aria-hidden="true">
     <div id="aiShell" class="ai-shell" role="dialog" aria-label="AI">
+      <i class="ai-grip ag-n" data-dir="n"></i><i class="ai-grip ag-s" data-dir="s"></i><i class="ai-grip ag-w" data-dir="w"></i><i class="ai-grip ag-e" data-dir="e"></i><i class="ai-grip ag-nw" data-dir="nw"></i><i class="ai-grip ag-ne" data-dir="ne"></i><i class="ai-grip ag-sw" data-dir="sw"></i><i class="ai-grip ag-se" data-dir="se"></i>
       <div class="ai-head">
-        <div class="ai-title"><b data-i18n="aiChatTitle">ШІ-ЧАТ</b><span id="aiModelTag" class="ai-modeltag"></span></div>
+        <div class="ai-title"><i class="ai-dragi" aria-hidden="true">⋮⋮</i><b data-i18n="aiChatTitle">ШІ-ЧАТ</b><span id="aiModelTag" class="ai-modeltag"></span></div>
         <div class="ai-head-btns">
           <button id="aiPowerTop" class="ai-hbtn pw" type="button">&#9211;</button>
           <button id="aiRandTop" class="ai-hbtn" type="button" data-i18n="aiRandShort"></button>
           <button id="aiSaveTop" class="ai-hbtn" type="button" data-i18n="aiSaveShort"></button>
           <button id="aiUndoTop" class="ai-hbtn" type="button" data-i18n="aiUndoShort"></button>
           <button id="aiRestoreTop" class="ai-hbtn" type="button" data-i18n="aiRestoreShort"></button>
+          <button id="aiClearTop" class="ai-hbtn" type="button" data-i18n="aiClearTop"></button>
           <button id="aiClose" class="ai-hbtn ai-x" type="button" aria-label="Close">&times;</button>
         </div>
       </div>
@@ -512,24 +596,32 @@ document.title = "Yamato Desktop YD Release [YD" + YD_MON + "]";</script>
   </div>
 
   <div id="kbSheet" class="kb-sheet" aria-hidden="true">
-    <div class="sheet-head"><b id="sheetTitle"></b><span id="sheetCount" class="sheet-count"></span>
-      <div class="key-lang"><button id="keyEN" class="small-lang" type="button">EN</button><button id="keyUA" class="small-lang" type="button">UA</button></div>
+    <div class="sheet-head" id="sheetHead" title="Перетягни за цю смугу"><i class="sheet-drag" aria-hidden="true">⋮⋮</i><b id="sheetTitle"></b><span id="sheetCount" class="sheet-count"></span>
+      <span class="sheet-fs" title="Розмір тексту у віджеті"><button id="shFsDown" type="button">A−</button><span id="shFsVal">16</span><button id="shFsUp" type="button">A+</button></span>
       <button id="sheetDone" class="sheet-done" type="button" data-i18n="done">ГОТОВО</button></div>
-    <textarea id="sheetEditor" class="note-editor" spellcheck="false"></textarea>
-    <div class="editor-tools"><button id="pasteBtn" type="button" data-i18n="paste">ВСТАВИТИ</button><button id="clearBtn" type="button" data-i18n="clear">ВИДАЛИТИ</button><span class="tool-gap"></span><button id="markOk" class="mk mk-ok" type="button">✓</button><button id="markNo" class="mk mk-no" type="button">✗</button><button id="emojiBtn" class="mk" type="button">😀</button></div>
-    <div id="emojiBox" class="emoji-box"></div>
-    <div id="virtualKeyboard" class="virtual-keyboard"></div>
-    <div class="keyboard-bottom">
-      <button id="keyShift" type="button">⇧ SHIFT</button><button id="keyCaps" type="button">CAPS</button>
-      <button id="keyboardSpace" type="button" data-i18n="space">ПРОБІЛ</button><button id="keyboardBackspace" type="button" aria-label="Backspace">⌫</button><button id="keyboardEnter" type="button">OK</button>
+    <div id="fmtTools" class="fmt-tools" role="toolbar" aria-label="Text format">
+      <button type="button" class="fmt-b" data-fmt="b" title="Ctrl+B"><b>B</b></button><button type="button" class="fmt-i" data-fmt="i" title="Ctrl+I"><i>I</i></button><button type="button" class="fmt-u" data-fmt="u" title="Ctrl+U"><u>U</u></button><button type="button" class="fmt-s" data-fmt="s"><s>S</s></button>
+      <span class="fmt-gap"></span>
+      <select id="fmtFont" aria-label="Font"><option value="">Шрифт</option><option value="sans">Sans</option><option value="serif">Serif</option><option value="elegant">Elegant</option><option value="mono">Mono</option><option value="hand">Hand</option><option value="bold">Impact</option></select>
+      <span class="fmt-gap"></span>
+      <button type="button" data-fmt="sizeDown" title="A−">A−</button><input id="fmtSize" type="number" min="8" max="72" step="1" placeholder="16" aria-label="Size"><button type="button" data-fmt="sizeUp" title="A+">A+</button>
+      <button type="button" data-fmt="small" class="fmt-small">малий</button><button type="button" data-fmt="big" class="fmt-big">великий</button><button type="button" data-fmt="huge" class="fmt-huge">заголовок</button>
+      <span class="fmt-gap"></span>
+      <label class="fmt-color" title="Колір"><input id="fmtColor" type="color" value="#ffb347"><span>A</span></label>
+      <button type="button" data-fmt="clear" title="Прибрати форматування">Tx</button>
     </div>
+    <textarea id="sheetEditor" class="note-editor" spellcheck="false"></textarea>
+    <div id="notePreview" class="note-preview" aria-label="Preview"></div>
+    <div class="editor-tools"><button id="noteUndo" class="mk" type="button" title="Ctrl+Z" aria-label="Undo">↶</button><button id="noteRedo" class="mk" type="button" title="Ctrl+Y" aria-label="Redo">↷</button><span class="tool-sep"></span><button id="noteList" class="mk" type="button" title="☐ / ☑" aria-label="Check list">☐</button><button id="markOk" class="mk mk-ok" type="button" aria-label="Check mark">✓</button><button id="markNo" class="mk mk-no" type="button" aria-label="Cross mark">✗</button><button id="emojiBtn" class="mk" type="button" aria-label="Emoji">😀</button><span class="tool-gap"></span><button id="pasteBtn" type="button" data-i18n="paste">ВСТАВИТИ</button><button id="clearBtn" type="button" data-i18n="clear">ВИДАЛИТИ</button></div>
+    <div id="emojiBox" class="emoji-box"></div>
+    <i class="sheet-grip g-w" data-dir="w"></i><i class="sheet-grip g-e" data-dir="e"></i><i class="sheet-grip g-s" data-dir="s"></i><i class="sheet-grip g-sw" data-dir="sw"></i><i class="sheet-grip g-se" data-dir="se"></i>
   </div>
 
   <div id="moveBar" class="move-bar" aria-hidden="true">
     <span data-i18n="moveMode">MOVE MODE</span>
     <div class="seg"><button id="modeFree" class="mini-btn active" type="button" data-i18n="modeFree">FREE</button><button id="modeGrid" class="mini-btn" type="button" data-i18n="modeGrid">GRID</button></div>
     <span id="moveHint" class="move-hint" data-i18n="moveHint">Drag an element or its tag.</span>
-    <button id="doneMove" class="mini-btn primary" type="button" data-i18n="done">DONE</button>
+    <button class="g-undo mini-btn" type="button" aria-label="Undo">↶</button><button class="g-redo mini-btn" type="button" aria-label="Redo">↷</button><button id="doneMove" class="mini-btn primary" type="button" data-i18n="done">DONE</button>
   </div>
 </div>
 <script src="script.js"></script>
@@ -537,19 +629,23 @@ document.title = "Yamato Desktop YD Release [YD" + YD_MON + "]";</script>
 <script src="wallfx.js"></script>
 <script src="ai.js"></script>
 <script src="extras.js"></script>
+<script src="presets2.js"></script>
 <script src="timer.js"></script>
 <script src="calc.js"></script>
+<script src="chaos.js"></script>
 <script src="daily.js"></script>
-<script src="data/cache/legacy/spinner-shared.js"></script>
-<script src="data/cache/legacy/challenge.js"></script>
-<script src="data/cache/legacy/stage2.js"></script>
-<script src="data/cache/legacy/leaderboard-config.js"></script>
-<script src="data/cache/legacy/leaderboard.js"></script>
-<script src="data/cache/legacy/spinner.js"></script>
+<script>window.YD_NOLEGACY = 1;/* Release 1.2: old spinner removed – scripts (≈420 KB) no longer loaded */</script>
 <script src="update.js"></script>
 <script src="music.js"></script>
 <script src="widgets2.js"></script>
 <script src="wresize.js"></script>
 <script src="cursorfx.js"></script>
+<script src="undo.js"></script>
+<script src="notefmt.js"></script>
+<script src="aiwin.js"></script>
+<script src="deskclick.js"></script>
+<script src="ui2.js"></script>
+<script src="ui3.js"></script>
+<script src="ui4.js"></script>
 </body>
 </html>
