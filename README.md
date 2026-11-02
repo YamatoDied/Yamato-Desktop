@@ -1,64 +1,42 @@
-# 🚀 Yamato Desktop 1.2 — Release Notes & Roadmap
+## ⚡ YD Release 1.3: reliable, light, easy to start with
 
-Version 1.2 brings high-performance controls, low-level audio routing, interactive physics, and clean telemetry for Windows 10/11.
+### 🕒 Clocks
+- **Two independent widgets:** the digital clock (with its date) and the analog clock now have their own tab, switch, designs and settings. Turning one on or off never moves the other or the panels below, and each can be dragged on its own.
+- **The date goes away with the digital clock.**
+- **More designs:** 27 digital (was 16) and 12 analog (was 3 looks). "Like the template" keeps the old behaviour.
+- **Digital settings:** seconds, 12/24 h, leading zero, blinking colons, font, colour (theme / accent / detail / custom) and 6 date formats.
+- **Analog settings:** numerals on the dial (12·3·6·9, 1–12, Roman), marks (4 / 12 / 60 / none), date on the dial, second hand and smooth motion, dial colour.
+- Old settings are migrated automatically.
 
----
+### 🖼 Look
+- **216 wallpapers** (was 162). Only 7 redraw every frame (was 52), so they are about 3× lighter on average (estimated).
+- **48 palettes**, **13 editor window styles**, sorting, a Favorites filter and ECO / LOW / MID cost badges.
 
-## ⚡ Performance & Optimization
+### 🧩 Widgets
+- **New:** Weather (up to 5-day forecast) and Tasks with repeats (daily, weekly, monthly, one-time).
+- **Faster:** Notes, Progress, System and Music do roughly 3× less work (modelled, not measured).
+- **Battery** now covers Bluetooth devices and USB phones.
 
-- **Performance Profiles:** Choose between *Maximum Efficiency*, *Balanced*, and *Full Fidelity ("As Before")*.
-- **Built-In Stress Test:** 4-stage automated benchmark (GPU/CPU) with 1-click fixes for bottlenecks.
-- **Real-Time Telemetry:** Live monitoring for RAM, SSD space, active core usage, GPU, and network throughput.
-- **Smart Autostart:** Elevated process priority (`AboveNormal`) for instant launch without starving system resources.
+### 🚀 Easier to use
+- **Quick Start** on first launch: 3 questions, 6 ready layouts.
+- **"Lost?"** button: search every setting in plain words.
+- Hotkeys tab, a hideable EDIT / EXIT panel, UA / EN from the first screen, and the AI replies in the language you write in.
+- Auto-cleanup of `%LocalAppData%\YamatoDesktop` and a clean exit with no leftover processes.
 
----
+### 🔒 Security
+- Local endpoints require a header and a local Host check.
+- Random XMRig API token on every run.
+- Updates without a SHA-256 digest are rejected.
 
-## 🎵 Media & Windows Integration
+### ⛏ Optional mining
+**Off by default and never starts without your own Monero wallet address.** XMRig is not bundled: Setup asks first (unchecked by default), and building from source fetches it for the Mining tab. Gentle defaults (5% CPU, Idle priority), monitoring, USD / EUR / UAH / PLN / GBP rates and an AFK mode. **Open dev fee: 1 minute per 100 minutes of active mining**, wallet address shown in the Mining tab. Don't want it? Just never enable it.
 
-- **App-Specific Volume Mixer:** Route audio for individual apps or browsers via WASAPI without changing master volume.
-- **SMTC Sync:** Full bi-directional track tracking, metadata, and album art extraction.
-- **Global Hotkeys:**
-  - `Ctrl + Alt + E` — Fullscreen / Edit workspace
-  - `Ctrl + Alt + M` — Play / Pause toggle
-  - `Ctrl + Alt + D` — Boss key (Quick-hide)
-  - `Ctrl + Alt + R` — Random theme generator
-  - `Ctrl + Alt + A` — AI Copilot workspace
-- **Smart HUD:** Top-edge navigation remains hidden off-screen, dropping down only when the cursor hits the top boundary.
+### 🌐 Network use
+GitHub (updates). Open-Meteo and ipapi.co (only with the Weather widget). CoinGecko (only for mining rates). dl.google.com (Android platform-tools, only for USB phone battery).
 
----
+### 📥 Install
+Download **`YamatoDesktop-Release-1.3-Setup.exe`**, or unzip **`YD_Release_1.3.zip`** and run `Build.bat`. Auto-update from 1.2 picks up the zip.
 
-## 💥 Chaos Physics & Interactive Dynamics
-
-- **Destruction Sandbox:** Smash and fragment widgets, clocks, and text containers in real-time.
-- **Destruction Tools:** Impact hammers, directional saws, and explosive AOE payloads.
-- **Debris & Restoration:** Physics-based trajectories, collision handling, damage counters, and 1-click restore.
-- **Materials:** Authentic wood finishes (Oak, Walnut, Pine, Ebony), Glass, Neon, and Minimal themes.
-
----
-
-## 🎨 Visual Fidelity & Polish
-
-- **Interpolated Cursor Trails:** Catmull-Rom spline curves eliminate visual tearing during fast mouse movement.
-- **High-DPI Adaptability:** Sub-pixel alignment and layout scaling for mixed multi-monitor setups.
-- **Architecture Hardening:** Cleared out obsolete clock code and secured WebView IPC channels.
-
----
-
-## 🗺️ Product Roadmap
-
-### 1. Custom Media & Wallpapers
-- Native hardware acceleration for local videos (MP4, WebM), live web URLs, and Wallpaper Engine compatibility.
-
-### 2. Productivity Utilities
-- Built-in image conversion (PNG, JPEG, WebP, ICO), resizing, and cropping directly from the desktop.
-- **On-Screen OCR Translator:** Screen-region selection for instant cross-language machine translation.
-
-### 3. Advanced Widgets & Controls
-- **Multi-Widget Container:** Tabbed, stackable multi-widget docking frames.
-- **Volume Mixer Widget:** Dedicated multi-channel desktop mixer with independent gain controls.
-- **Notification & Launchpad Center:** Windows notification feed and quick app/link launcher.
-- **Embedded CLI:** Integrated terminal drawer for PowerShell and CMD.
-
-### 4. Developer Platform
-- **Public JS/TS API:** Open SDK for building and distributing custom desktop widgets and plugins.
-- **Granular Configs:** Deep customization files for layouts, themes, and sensor integrations.
+### ⚠ Known limitations
+- Battery level of 2.4 GHz dongle devices is not shown yet.
+- Tested on one PC (Windows 10/11), so other setups may differ. Found a bug? Open an Issue.
